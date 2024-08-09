@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>発表スケジュール自動作成</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="container-fluid">
+        <h1 class="mt-5 display-5 mb-3">発表スケジュール自動作成</h1>
+        <div class="row mb-3">
+            <div class="col-md-8 col-sm-12 mb-3">
+                <div class="card">
+                    <div class="card-header">
+                        <i class="bi bi-book"></i> README
+                    </div>
+                    <div class="card-body">
+                        <p>このツールは、発表スケジュールを自動で作成するためのものです。以下の手順でスケジュールを作成してください。</p>
+                        <ol>
+                            <li>設定項目の下段にある「ファイルを選択」から、スケジュールを作成するExcelファイルを選択します。[<a
+                                    href="sample.xlsx">サンプルファイルをダウンロード</a>]</li>
+                            <li>「スケジュールを作成」ボタンをクリックします。ボタンを押すたびに異なるスケジュールが表示されます。</li>
+                        </ol>
+                        <p>作成したスケジュールは「Excelとしてエクスポート」ボタンを押すとExcel形式（xlsx）でダウンロードできます。この画面表示では発表タイトルや英語表記がみやすさの観点から省略されていますが、ダウンロードされたExcelファイルにはすべてのテーブル情報が含まれています。
+                        </p>
+
+                        <div class="alert alert-primary" role="alert">
+                            <i class="bi bi-info-circle"></i>
+                            <strong>スケジュール作成は一度だけでなく、発表数のバランスや昼休憩などを考慮して気にいるパターンまで繰り返してください。</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-12 col-md-4 mb-3">
+                <div class="card">
+                    <div class="card-header">
+                        <i class="bi bi-gear"></i> 設定
+                    </div>
+                    <div class="card-body">
+                        <form id="settings-form">
+                            <div class="input-group mb-3">
+                                <label class="input-group-text" for="startTime">開始時間</label>
+                                <input type="time" value="10:30" id="startTime" class="form-control" required>
+                            </div>
+                            <div class="input-group mb-3">
+                                <label class="input-group-text" for="duration">一件あたりの発表時間（分）</label>
+                                <input type="number" value="15" id="duration" class="form-control" required>
+                            </div>
+                            <div class="input-group mb-3">
+                                <label class="input-group-text" for="breakTime">お昼休みの長さ（分）</label>
+                                <input type="number" value="60" id="breakTime" class="form-control" required>
+                            </div>
+                            <div class="input-group mb-3">
+                                <label class="input-group-text" for="breakTime">お昼休みの開始許可時間</label>
+                                <input type="time" value="11:45" id="breakTime_start" class="form-control" required>
+                            </div>
+
+                            <div class="input-group mb-3">
+                                <label class="input-group-text" for="parallelSessions">パラレルセッション数（固定）</label>
+                                <input type="number" value="2" id="parallelSessions" class="form-control" max="5"
+                                    disabled>
+                            </div>
+                            <hr>
+                            <div class="input-group mb-3">
+                                <input type="file" id="csvFile" class="form-control" accept=".xlsx"
+                                    onchange="document.querySelector('#button_file').disabled=false;" required>
+                                <button type="submit" class="btn btn-primary" type="button" id="button_file"
+                                    disabled>スケジュールを作成</button>
+                            </div>
+                            <p id="info"></p>
+                    </div>
+                </div>
+                </form>
+            </div>
+
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <i class="bi bi-table"></i> タイムテーブル
+                    </div>
+                    <div class="card-body">
+                        <span id="timetable_info"></span>
+                        <div id="schedule"></div>
+                        <button id="exportExcel" class="btn btn-secondary mt-4" disabled>Excelとしてエクスポート</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+        integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"
+        integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"
+        integrity="sha512-qZvrmS2ekKPF2mSznTQsxqPgnpkI4DNTlrdUmTzrDgektczlKNRRhy5X5AAOnx5S09ydFYWWNSfcEqDTTHgtNA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"
+        integrity="sha512-r22gChDnGvBylk90+2e/ycr3RVrDi8DIOkIGNhJlKfuyQM4tIRAI062MaV8sfjQKYVGjOBaZBOA87z+IhZE9DA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>
